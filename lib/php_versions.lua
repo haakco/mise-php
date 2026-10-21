@@ -58,18 +58,6 @@ local function getenv(name)
     return nil
 end
 
-local function runtime_os()
-    local ok, value = pcall(function()
-        return RUNTIME.osType
-    end)
-
-    if ok then
-        return value
-    end
-
-    return nil
-end
-
 local function read_command_output(command)
     local ok, handle = pcall(io.popen, command)
 
@@ -104,10 +92,10 @@ local function process_command_line_has_prerelease_flag()
     -- current mise command line from the hook process. This keeps ordinary
     -- ls-remote stable-only while making native `mise ls-remote --prerelease`
     -- work for this plugin backend.
-    local os_type = runtime_os()
+    -- RUNTIME describes the lock target; shell commands run on the host.
     local output = nil
 
-    if os_type == "windows" then
+    if package.config:sub(1, 1) == "\\" then
         output = read_command_output([[powershell -NoProfile -ExecutionPolicy Bypass -Command "$pidToRead=$PID; for($i=0; $i -lt 6; $i++){ $p=Get-CimInstance Win32_Process -Filter "ProcessId=$pidToRead"; if($null -eq $p){ break }; if($p.CommandLine){ $p.CommandLine }; $pidToRead=$p.ParentProcessId }"]])
     else
         output = read_command_output([[ps -o args= -p "$PPID" 2>/dev/null]])
