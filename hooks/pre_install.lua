@@ -27,6 +27,23 @@ function PLUGIN:PreInstall(ctx)
         php_versions.prerelease_flag_enabled(ctx)
     )
 
+    -- The daily version cache can lag urgent security releases. Verify an exact
+    -- stable request against PHP's own release tag before accepting it.
+    if not release and php_versions.is_stable(version) and not static_php.is_requested(ctx) then
+        local http = require("http")
+        local response, err = http.get({
+            url = "https://raw.githubusercontent.com/php/php-src/php-" .. version .. "/main/php_version.h",
+            headers = { ["User-Agent"] = "verzly-mise-php" },
+        })
+        if err ~= nil then
+            error("Failed to verify PHP release " .. version .. ": " .. tostring(err))
+        end
+        if response.status_code == 200
+            and response.body:match('#define%s+PHP_VERSION%s+"([^"]+)"') == version then
+            release = php_versions.available_record(version)
+        end
+    end
+
     if not release then
         error("Version not found: " .. tostring(version))
     end
