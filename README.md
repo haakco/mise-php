@@ -42,6 +42,8 @@ Although some PHP plugins are available for [jdx/mise](https://github.com/jdx/mi
 
 The officially released PHP versions are provided by `verzly/mise-php` for Linux, macOS, and Windows. Additionally, it installs a dedicated Composer for each PHP version to help you avoid version conflicts.
 
+Exact stable versions missing from the daily release cache are verified against `PHP_VERSION` in the official `php/php-src` release tag. This allows urgent security releases to install before the cache refreshes; missing or mismatched tags remain rejected. Static binary installs still require a published static release.
+
 ### Pre-binaries
 
 On Windows, we can work quickly using precompiled binaries.
