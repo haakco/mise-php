@@ -20,7 +20,7 @@ version_check_before_dependencies = function() end
 version_check_after_dependencies = function() end
 install_dependencies = function() end
 
-for _, version in ipairs({ "8.3.36", "8.4.27", "8.5.12" }) do
+for _, version in ipairs({ "8.3.37", "8.4.28", "8.5.13" }) do
     body = '#define PHP_VERSION "' .. version .. '"'
     local release = PLUGIN:PreInstall({ version = version })
     assert(release.version == version)
